@@ -1,0 +1,29 @@
+{
+  "name": "content-management-system",
+  "version": "1.0.0",
+  "description": "Manage company data",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boundsalexis/content-management-system.git"
+  },
+  "keywords": [
+    "content",
+    "management",
+    "systems"
+  ],
+  "author": "Alexis Bounds",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/boundsalexis/content-management-system/issues"
+  },
+  "homepage": "https://github.com/boundsalexis/content-management-system#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "inquirer": "^7.0.3",
+    "mysql": "^2.17.1"
+  }
+}
