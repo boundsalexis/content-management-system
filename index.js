@@ -42,12 +42,12 @@ function pickTask(){
       else if(res.task === "Add role"){
         addRole();
       }
-      else if(res.task === "Update department"){
-practiceJoins();
-      }
-      else if(res.task === "Update employee"){
-        updateEmployeeArray();
-      }
+    //   else if(res.task === "Update department"){
+    // practiceJoins();
+    //   }
+    //   else if(res.task === "Update employee"){
+    //     updateEmployeeArray();
+    //   }
     //   else if(res === "Update role"){
 
     //   }
@@ -78,6 +78,7 @@ function addDepartment(){
         })
 }
 function addEmployee(){
+    updateRolesArray();
     updateEmployeeArray();
     inquirer.prompt([
         {name: "firstname",
@@ -99,15 +100,41 @@ function addEmployee(){
         choices: employeeArray
         }
     ]).then(function(res){
-            connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [res.firstname,res.lastname,res.role, res.manager], function(err, result){
+       var role_id;
+       var manager_id;
+        // console.log(res.manager)
+        var manageranswer = res.manager;
+        var manager = manageranswer.split(" ");
+       
+        let rolePromise =new Promise(function(resolve, reject) {
+            connection.query("SELECT id FROM roles WHERE title = ?", [res.role], function(err, result){
+                role_id =result[0].id;
+                
+                resolve(role_id);
+             })
+          })
+          let managerPromise =new Promise(function(resolve, reject){
+            // console.log(managerPromise);
+            connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [manager[0], manager[1]], function(err, result){
+                manager_id =result[0].id;
+                
+                resolve(manager_id);
+            }) 
+          });
+          Promise.all([rolePromise, managerPromise, res]).then(function(values){
+              connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [values[2].firstname,values[2].lastname,values[0], values[1]], function(err, result){
                 if(err) throw err;
                 console.log(result)
                 console.log("The employee has been added");
                 pickTask();
             
 })
+          })
+            
 })}
+
 function addRole(){
+    updateDepartmentArray();
     inquirer.prompt([
         {name: "title",
         message: "What is the new role's title?",
@@ -118,8 +145,9 @@ function addRole(){
         type: "input"
         },
         {name: "department",
-        message: "What department is the id?",
-        type: "number"
+        message: "What department is this role in?",
+        type: "list",
+        choices: departmentArray
         }
     ]).then(function(res){
             connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)", [res.title,res.salary,res.department], function(err, result){
@@ -183,6 +211,9 @@ function practiceJoins(){
         console.log(result)
     })
 }
+
+
+//ALLOWS US TO USE THE DB INFO IN OUR INQUIRER PROMPTS
 var employeeArray=[];
 function updateEmployeeArray(){
     employeeArray =[];
@@ -191,8 +222,6 @@ function updateEmployeeArray(){
             let employee = result[i].first_name + " " +result[i].last_name;
             employeeArray.push(employee);
         }
-    //     console.log(employeeArray);
-    // return(employeeArray);
     })
 }
 var rolesArray=[];
@@ -200,14 +229,12 @@ function updateRolesArray(){
     rolesArray =[];
     connection.query("SELECT title FROM roles", function(err, result){
         for(i=0; i < result.length; i ++){
-            let role = result[i].title
+            let role = result[i].title;
             rolesArray.push(role);
+            console.log(rolesArray);
         }
-    //     console.log(employeeArray);
-    // return(employeeArray);
     })
 }
-// function update
 
 var departmentArray= [];
 function updateDepartmentArray(){
