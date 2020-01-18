@@ -34,7 +34,7 @@ function pickTask() {
             name: "task",
             message: "Select a task",
             type: "list",
-            choices: ["Add department", "Add employee", "Add role", "Update department", "Update employee", "Update role", "View department", "View employee", "View role", "Quit"]
+            choices: ["Add department", "Add employee", "Add role", "Update employee's role", "View departments", "View employees", "View roles", "Quit"]
         }]).then(function (res) {
             if (res.task === "Add department") {
                 addDepartment();
@@ -45,22 +45,20 @@ function pickTask() {
             else if (res.task === "Add role") {
                 addRole();
             }
-            //   else if(res.task === "Update department"){
-            // practiceJoins();
-            //   }
-            //   else if(res.task === "Update employee"){
-            //     updateEmployeeArray();
-            //   }
-            //   else if(res === "Update role"){
+              else if(res.task === "Update employee's role"){
+            // updateRole();
+            updateDepartmentArray();
+            console.log(departmentArray);
 
-            //   }
-            else if (res.task === "View department") {
+              }
+            
+            else if (res.task === "View departments") {
                 viewDepartment();
             }
-            else if (res.task === "View employee") {
+            else if (res.task === "View employees") {
                 viewEmployee();
             }
-            else if (res.task === "View role") {
+            else if (res.task === "View roles") {
                 viewRole();
             }
         })
@@ -184,27 +182,53 @@ function addRole() {
 // function updateEmployee(){
 
 // }
-// function updateRole(){
-//     inquirer.prompt([
-//         {name:"role",
-//         message:"what is their new role?",
-//         choices:[]// [trying to figur eit out]
-//         },
-//         {name:"employee",
-//         message:"choose and employee",
-//         choices:[]
-//         }
-//     ]).then(function(res){
-//         connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [res.role, res.employee], function(err,result){
-//             console.log(query);
-//         })
-//     })
-// }
+function updateRole(){
+    // updateEmployeeArray();
+    // console.log(employeeArray);
+    // updateRolesArray();
+    inquirer.prompt([
+        {name:"employee",
+        message:"choose and employee",
+        type:"list",
+        choices: employeeArray
+        },
+        {name: "role",
+        message: "what is their new role?",
+        type:"list",
+        choices: rolesArray
+        }
+    ]).then(function(res){
+        
+        var role_id;
+        var employee_id;
+        var employeeanswer = res.employee;
+        var employee = employeeanswer.split(" ");
+
+
+        let employeePromise = new Promise(function (resolve, reject) {
+            connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [employee[0], employee[1]], function (err, result) {
+                employee_id = result[0].id;
+                resolve(employee_id);
+            })   
+        });
+
+        let rolePromise = new Promise(function(resolve, rejet){
+            connection.query("SELECT id FROM roles WHERE title= ?", [res.role], function (err,result){
+                role_id = result[0].id;
+                resolve(role_id);
+            })
+        })
+        Promise.all([employee_id, role_id]).then(function(values){
+            connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [values[1], values[0]], function(err,result){
+                console.log(result);
+            })
+        })
+        
+    })
+}
 function viewEmployee() {
     connection.query("SELECT first_name, last_name, title, salary, name FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON department.id = roles.department_id", function (err, result) {
-        // for (let i = 0; i < result.length; i++) {
-        //     console.log("First name: " + result[i].first_name + "        Last name: " + result[i].last_name + "         Role id:" + result[i].manager_id);
-        // }
+       
         console.table(result);
         pickTask();
     })
@@ -226,13 +250,6 @@ function viewRole() {
 
 
 }
-// function practiceJoins() {
-//     let queryString = "SELECT first_name, last_name, title, salary FROM employee t1 INNER JOIN roles t2 ON t1.role_id = t2.id";
-//     connection.query(queryString, function (err, result) {
-//         console.table(result);
-//     })
-// }
-
 
 //ALLOWS US TO USE THE DB INFO IN OUR INQUIRER PROMPTS
 var employeeArray = [];
