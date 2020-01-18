@@ -46,9 +46,8 @@ function pickTask() {
                 addRole();
             }
               else if(res.task === "Update employee's role"){
-            // updateRole();
-            updateDepartmentArray();
-            console.log(updateDepartmentArray());
+            updateRole();
+            
 
               }
             
@@ -184,9 +183,13 @@ function addRole() {
 // }
 function updateRole(){
     updateEmployeeArray();
-    // console.log(employeeArray);
+  
     updateRolesArray();
     inquirer.prompt([
+        {name:"test",
+        message:"would you like to update?",
+        type: "confirm"
+        },
         {name:"employee",
         message:"choose and employee",
         type:"list",
