@@ -48,7 +48,7 @@ function pickTask() {
               else if(res.task === "Update employee's role"){
             // updateRole();
             updateDepartmentArray();
-            console.log(departmentArray);
+            console.log(updateDepartmentArray());
 
               }
             
@@ -183,9 +183,9 @@ function addRole() {
 
 // }
 function updateRole(){
-    // updateEmployeeArray();
+    updateEmployeeArray();
     // console.log(employeeArray);
-    // updateRolesArray();
+    updateRolesArray();
     inquirer.prompt([
         {name:"employee",
         message:"choose and employee",
@@ -218,7 +218,7 @@ function updateRole(){
                 resolve(role_id);
             })
         })
-        Promise.all([employee_id, role_id]).then(function(values){
+        Promise.all([employeePromise, rolePromise]).then(function(values){
             connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [values[1], values[0]], function(err,result){
                 console.log(result);
             })
@@ -242,7 +242,7 @@ function viewDepartment() {
     })
 }
 function viewRole() {
-    connection.query("SELECT * FROM role", function (err, result) {
+    connection.query("SELECT * FROM roles", function (err, result) {
         console.table(result);
         pickTask();
 
