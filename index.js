@@ -39,9 +39,9 @@ function pickTask(){
       else if (res.task === "Add employee"){
         addEmployee();
       }
-    //   else if(res === "Add role"){
-
-    //   }
+      else if(res.task === "Add role"){
+        addRole();
+      }
     //   else if(res === "Update department"){
 
     //   }
@@ -104,9 +104,30 @@ function addEmployee(){
             
 })
 })}
-// function addRole(){
-
-// }
+function addRole(){
+    inquirer.prompt([
+        {name: "title",
+        message: "What is the new role's title?",
+        type: "input"
+        },
+        {name: "salary",
+        message: "What is the new role's salary?",
+        type: "input"
+        },
+        {name: "department",
+        message: "What department is the id?",
+        type: "number"
+        }
+    ]).then(function(res){
+            connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)", [res.title,res.salary,res.department], function(err, result){
+                if(err) throw err;
+                console.log(result)
+                console.log("The role has been added");
+                pickTask();
+            
+})
+})
+}
 // function updateDepartment(){
 
 // }
