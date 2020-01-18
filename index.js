@@ -28,6 +28,7 @@ connection.connect(function (err) {
 });
 // a function to be called initially and after every action until the user wishes to quit
 function pickTask() {
+    console.log("\n\n");
     inquirer.prompt([
         {
             name: "task",
@@ -64,7 +65,7 @@ function pickTask() {
             }
         })
 }
-
+/////////ALL ADDING FUNCTIONS////////////////////////
 function addDepartment() {
     inquirer.prompt([
         {
@@ -74,7 +75,6 @@ function addDepartment() {
         }]).then(function (res) {
             connection.query("INSERT INTO department (name) VALUES (?)", [res.name], function (err, result) {
                 if (err) throw err;
-                console.log(result);
                 console.log("The department has been added");
                 pickTask();
             })
@@ -129,8 +129,7 @@ function addEmployee() {
         Promise.all([rolePromise, managerPromise, res]).then(function (values) {
             connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [values[2].firstname, values[2].lastname, values[0], values[1]], function (err, result) {
                 if (err) throw err;
-                console.log(result)
-                console.log("The employee has been added");
+                console.log("The employee has been added\n");
                 pickTask();
 
             })
@@ -170,8 +169,7 @@ function addRole() {
         Promise.all([departmentPromise, res]).then(function (values) {
             connection.query("INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)", [values[1].title, values[1].salary, values[0]], function (err, result) {
                 if (err) throw err;
-                console.log(result)
-                console.log("The employee has been added");
+                console.log("The employee has been added \n");
                 pickTask();
             }
             )
@@ -202,36 +200,38 @@ function addRole() {
 //         })
 //     })
 // }
-function viewDepartment() {
-    connection.query("SELECT * FROM department", function (err, result) {
-        for (let i = 0; i < result.length; i++) {
-            console.log("ID: " + result[i].id + "           Name: " + result[i].name);
-        }
+function viewEmployee() {
+    connection.query("SELECT first_name, last_name, title, salary, name FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON department.id = roles.department_id", function (err, result) {
+        // for (let i = 0; i < result.length; i++) {
+        //     console.log("First name: " + result[i].first_name + "        Last name: " + result[i].last_name + "         Role id:" + result[i].manager_id);
+        // }
+        console.table(result);
         pickTask();
     })
 
 }
-function viewEmployee() {
-    connection.query("SELECT * FROM employee", function (err, result) {
-        for (let i = 0; i < result.length; i++) {
-            console.log("First name: " + result[i].first_name + "        Last name: " + result[i].last_name + "         Role id:" + result[i].manager_id);
-        }
+function viewDepartment() {
+    connection.query("SELECT * FROM department", function (err, result) {
+        console.table(result);
+        pickTask();
+
     })
 }
 function viewRole() {
     connection.query("SELECT * FROM role", function (err, result) {
-        for (let i = 0; i < result.length; i++) {
-            console.log("Title: " + result[i].title + "       Salary: " + result[i].salary + "        Department id:" + result[i].department_id);
-        }
+        console.table(result);
+        pickTask();
+
     })
 
+
 }
-function practiceJoins() {
-    let queryString = "SELECT first_name, last_name, title, salary FROM employee t1 INNER JOIN roles t2 ON t1.role_id = t2.id";
-    connection.query(queryString, function (err, result) {
-        console.log(result)
-    })
-}
+// function practiceJoins() {
+//     let queryString = "SELECT first_name, last_name, title, salary FROM employee t1 INNER JOIN roles t2 ON t1.role_id = t2.id";
+//     connection.query(queryString, function (err, result) {
+//         console.table(result);
+//     })
+// }
 
 
 //ALLOWS US TO USE THE DB INFO IN OUR INQUIRER PROMPTS
@@ -252,7 +252,6 @@ function updateRolesArray() {
         for (i = 0; i < result.length; i++) {
             let role = result[i].title;
             rolesArray.push(role);
-            console.log(rolesArray);
         }
     })
 }
