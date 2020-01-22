@@ -223,7 +223,8 @@ function updateRole(){
         })
         Promise.all([employeePromise, rolePromise]).then(function(values){
             connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [values[1], values[0]], function(err,result){
-                console.log(result);
+                console.log("Employee updated");
+                pickTask();
             })
         })
         
