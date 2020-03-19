@@ -1,6 +1,10 @@
 # Content Management System
 Connects to a database and allows you to add new departments, roles and emploees
 
+# Summary
+As a business owner
+I want to be able to view and manage the departments, roles, and employees in my company
+So that I can organize and plan my business
 
 # links
 > [GitHub Repository](https://github.com/boundsalexis/content-management-system)
@@ -13,7 +17,7 @@ Connects to a database and allows you to add new departments, roles and emploees
 > Mysql Databse
  
 # Installation
-Do these before running the file
+
 - Install MySQL Workbench
  - Clone from github repo
  - Run NPM Install
@@ -21,14 +25,8 @@ Do these before running the file
  - If you want to change the database name, change it in the database.sql file and in the index.js file
  - Be aware that our DB file drops any existing DB named my_company
  - Copy and paste the database.sql file into your MySQL Workbench 
+ - Make adjustments to seeds.sql file as needed, only have to run it if you do not want to enter each employee on the command line
  
-
-
-
-# Summary
-As a business owner
-I want to be able to view and manage the departments, roles, and employees in my company
-So that I can organize and plan my business
 
 
 # Code Snippet
@@ -45,6 +43,7 @@ function updateEmployeeArray() {
 }
 ```
 > Allows prompt choices to be dynamic and accurate
+> When you add a new employee they will immediately show up in the options no need to relaunch
 ``` javascript
 let managerPromise = new Promise(function (resolve, reject) {
             connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [manager[0], manager[1]], function (err, result) {
@@ -56,15 +55,11 @@ let managerPromise = new Promise(function (resolve, reject) {
 ```
 > This is how i took the answers from the prompt and got the associated id
 
-# Jest
-> When I was testing with Jest it became abundantly clear how useful it can be.
-> I built the classes in under an hour and spent too many hours testing the rest of the program manually
-
 
 ## Authors
 
 * **Alexis Bounds** 
 
-- [Link to Portfolio Site](https://github.com/boundsalexis/basic-portfolio)
+- [Link to Portfolio Site](https://alexisboundsportfolio.herokuapp.com/)
 - [Link to Github](https://github.com/boundsalexis)
 - [Link to LinkedIn](https://www.linkedin.com/in/alexis-bounds-9b7711169/)
