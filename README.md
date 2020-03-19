@@ -10,7 +10,19 @@ Connects to a database and allows you to add new departments, roles and emploees
 
 # Technologies Used
 > Node JS 
-> Mysql for database persistence
+> Mysql Databse
+ 
+# Installation
+Do these before running the file
+- Install MySQL Workbench
+ - Clone from github repo
+ - Run NPM Install
+ - In the index.js file change your user and password (line 13, 16)
+ - If you want to change the database name, change it in the database.sql file and in the index.js file
+ - Be aware that our DB file drops any existing DB named my_company
+ - Copy and paste the database.sql file into your MySQL Workbench 
+ 
+
 
 
 # Summary
@@ -44,7 +56,7 @@ let managerPromise = new Promise(function (resolve, reject) {
 ```
 > This is how i took the answers from the prompt and got the associated id
 
-# Jess
+# Jest
 > When I was testing with Jest it became abundantly clear how useful it can be.
 > I built the classes in under an hour and spent too many hours testing the rest of the program manually
 

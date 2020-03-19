@@ -1,10 +1,8 @@
 //DEPENDENCIES
-
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
 // CREATE CONNECTION TO MYSQL DATABASE
-
 var connection = mysql.createConnection({
     host: "localhost",
 
@@ -45,12 +43,10 @@ function pickTask() {
             else if (res.task === "Add role") {
                 addRole();
             }
-              else if(res.task === "Update employee's role"){
-            updateRole();
-            
+            else if (res.task === "Update employee's role") {
+                updateRole();
+            }
 
-              }
-            
             else if (res.task === "View departments") {
                 viewDepartment();
             }
@@ -59,6 +55,11 @@ function pickTask() {
             }
             else if (res.task === "View roles") {
                 viewRole();
+            }
+            else if (res.task === "Quit"){
+                connection.end(function(err) {
+                    // The connection is terminated now
+                  });
             }
         })
 }
@@ -172,36 +173,34 @@ function addRole() {
             )
         })
 
- 
-})
+
+    })
 }
-// function updateDepartment(){
 
-// }
-// function updateEmployee(){
-
-// }
-function updateRole(){
+function updateRole() {
     updateEmployeeArray();
-  
+
     updateRolesArray();
     inquirer.prompt([
-        {name:"test",
-        message:"would you like to update?",
-        type: "confirm"
+        {
+            name: "test",
+            message: "would you like to update?",
+            type: "confirm"
         },
-        {name:"employee",
-        message:"choose and employee",
-        type:"list",
-        choices: employeeArray
+        {
+            name: "employee",
+            message: "choose and employee",
+            type: "list",
+            choices: employeeArray
         },
-        {name: "role",
-        message: "what is their new role?",
-        type:"list",
-        choices: rolesArray
+        {
+            name: "role",
+            message: "what is their new role?",
+            type: "list",
+            choices: rolesArray
         }
-    ]).then(function(res){
-        
+    ]).then(function (res) {
+
         var role_id;
         var employee_id;
         var employeeanswer = res.employee;
@@ -212,27 +211,27 @@ function updateRole(){
             connection.query("SELECT id FROM employee WHERE first_name = ? AND last_name = ?", [employee[0], employee[1]], function (err, result) {
                 employee_id = result[0].id;
                 resolve(employee_id);
-            })   
+            })
         });
 
-        let rolePromise = new Promise(function(resolve, rejet){
-            connection.query("SELECT id FROM roles WHERE title= ?", [res.role], function (err,result){
+        let rolePromise = new Promise(function (resolve, rejet) {
+            connection.query("SELECT id FROM roles WHERE title= ?", [res.role], function (err, result) {
                 role_id = result[0].id;
                 resolve(role_id);
             })
         })
-        Promise.all([employeePromise, rolePromise]).then(function(values){
-            connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [values[1], values[0]], function(err,result){
+        Promise.all([employeePromise, rolePromise]).then(function (values) {
+            connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [values[1], values[0]], function (err, result) {
                 console.log("Employee updated");
                 pickTask();
             })
         })
-        
+
     })
 }
 function viewEmployee() {
     connection.query("SELECT first_name, last_name, title, salary, name FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON department.id = roles.department_id", function (err, result) {
-       
+
         console.table(result);
         pickTask();
     })
